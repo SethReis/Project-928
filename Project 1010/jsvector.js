@@ -30,8 +30,8 @@ JSVector.prototype.add = function(vec){
 }
 
 JSVector.addGetNew = function(vec1, vec2){
-  var x = vec1.x + vec2.x||0;
-  var y = vec1.y + vec2.y||0;
+  var x = vec1.x + vec2.x;
+  var y = vec1.y + vec2.y;
   return new JSVector(x, y);
 }
 

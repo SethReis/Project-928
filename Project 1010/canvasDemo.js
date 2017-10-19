@@ -4,17 +4,9 @@ var ctx;// This is a better name for a global variable
 var mouseLoc = new JSVector(0, 0);
 var movers = [];
 var atts = [];
-var reps = [];
+var orbs = [];
+var snakes = []
 
-var x = [],
-  y = [],
-  segNum = 20,
-  segLength = 18;
-
-for (var i = 0; i < segNum; i++) {
-  x[i] = 0;
-  y[i] = 0;
-}
 
 function init(){
   //get the canvas
@@ -28,11 +20,17 @@ function init(){
   // get the context
   ctx = canvas.getContext('2d'); // This is the context
   for(var i = 0; i < 1; i++){
+    snakes.push(new Snake());
+  }
+  for(var i = 0; i < 1; i++){
     movers.push(new Mover());
   }
-  for(var i = 0; i < 250; i++){
-    atts.push(new Att());
+  for(var i = 0; i < 1; i++){
+    orbs.push(new Orb());
   }
+  // for(var i = 0; i < 250; i++){
+  //   atts.push(new Att());
+  // }
   canvas.addEventListener("mousemove", handleMouseMove);
   animate(); // Call to your animate function
 }
@@ -49,46 +47,53 @@ function animate(){
     var mover = movers[i];
     mover.update();
     mover.render();
-    for(var j = atts.length-1; j >= 0; j--){
-      var mover = movers[i];
-      var att = atts[j];
-      var distance = att.loc.distance(mover.loc)
-      if (distance <= 25){
-        atts.splice(j, 1);
-      }
-    }
-    for(var j = 0; j < atts.length; j++){
-      var count = 0;
-      var att= atts[j];
-      var mover = movers[i];
-      var distance = att.loc.distance(mover.loc)
-      if (distance <= 200){
-        var f = JSVector.subGetNew(atts[j].loc, movers[i].loc);
-        f.normalize();
-        f.mult(2.9);
-        att.applyForce(f);
-        count += 1;
-      }
-      if (count >= 10 && distance > 200){
-        count = 0;
-        att.vel.normalize();
-      }
-    }
   }
   for(var i = 0; i < atts.length; i++){
     var att = atts[i];
     att.update();
     att.render();
-    // for(var j = 0; j < movers.length; j++){
-    //   var mover = movers[j];
-    //   var att = atts[i];
-    //   var distance = mover.loc.distance(att.loc)
-    //   if (distance <= 200){
-    //     var f = JSVector.subGetNew(atts[i].loc, movers[j].loc);
-    //     f.normalize();
-    //     f.mult(3);
-    //     mover.applyForce(f);
-    //   }
-    // }
+    for(var j = 0; j < movers.length; j++){
+      var mover = movers[j];
+      var att = atts[i];
+      var distance = mover.loc.distance(att.loc)
+      if (distance <= 200){
+        var f = JSVector.subGetNew(atts[i].loc, movers[j].loc);
+        f.normalize();
+        f.mult(3);
+        mover.applyForce(f);
+      }
+    }
+  }
+  for(var i = 0; i < orbs.length; i++){
+    var orb = orbs[i];
+    orb.update();
+    orb.render();
+  }
+  for(var i = 0; i < snakes.length; i++){
+    var snake = snakes[i];
+    snake.update();
+    snake.render();
+    for(var j = atts.length-1; j >= 0; j--){
+      var snake = snakes[i];
+      var att = atts[j];
+      var distance = att.loc.distance(snake.loc)
+      if (distance <= 25){
+        atts.splice(j, 1);
+      }
+    }
+    for(var j = 0; j < atts.length; j++){
+      var att= atts[j];
+      var snake = snakes[i];
+      var distance = att.loc.distance(snake.loc)
+      if (distance <= 200){
+        var f = JSVector.subGetNew(atts[j].loc, snakes[i].loc);
+        f.normalize();
+        f.mult(2.9);
+        att.applyForce(f);
+      }
+      if (count >= 10 && distance > 200){
+        att.vel.normalize();
+      }
+    }
   }
 }
